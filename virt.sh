@@ -51,7 +51,7 @@ else
 fi
 
 # Reset HOST files
-sed -i "/${IP}	${HOST}/d" $HOST_FILE
+# sed -i "/${IP}	${HOST}/d" $HOST_FILE
 
 # Installation
 
