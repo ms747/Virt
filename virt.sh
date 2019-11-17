@@ -7,7 +7,7 @@ function check_connectivity() {
     local test_count
     test_ip="8.8.8.8"
     test_count=1
-    if ping -c ${test_count} ${test_ip} 2> /dev/null; then
+    if ping -c ${test_count} ${test_ip} > /dev/null; then
        echo "Connected to the internet"
     else
        echo "Connect to the internet and please try again"
@@ -49,8 +49,16 @@ function install_virt(){
 	apt install -y proxmox-ve postfix open-iscsi > /dev/null
 }
 
+function pre_install(){
+	apt update -y
+	apt upgrade -y
+	apt install git bridge-utils net-tools
+}
+
 # Check for internet
 check_connectivity
+
+pre_install
 
 # Get Interface
 echo "Please Select your INTERFACE"
@@ -68,7 +76,7 @@ HOST_FILE="/etc/hosts"
 cp $HOST_FILE $HOST_FILE.scriptbackup
 
 # Disable 127.0.1.1
-sed -i.original -E "s/^(127.0.1.1)/#\1/g" $HOST_FILE
+sed -i.original -E "s/^(127.0.1.1)/#\1/g;s/^(127.0.0.1)/#\1/g" $HOST_FILE
 
 # Set Hostname
 HOST=""
