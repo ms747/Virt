@@ -27,16 +27,16 @@ function make_static_host(){
 
 	echo "auto lo
 iface lo inet loopback
-iface ${interface} inet manual
+iface ${INTERFACE} inet manual
 auto vmbr0
 iface vmbr0 inet static
         address  ${IP}
-        netmask  ${SUBNET}
+        netmask  ${NETMASK}
         gateway  ${GATEWAY}
 	bridge-ports ${INTERFACE}
 	bridge-stp off
         bridge-fd 0
-        dns-nameservers ${GATEWAY}"  > /etc/network/interfaces
+        dns-nameservers ${GATEWAY}"  > $INTERFACE_FILE
 	service networking restart
 }
 
@@ -53,13 +53,13 @@ function install_virt(){
 check_connectivity
 
 # Get Interface
-echo "Please Select your interface"
-interface=""
+echo "Please Select your INTERFACE"
+INTERFACE=""
 values=$(ls /sys/class/net)
-PS3="Select interface : "
+PS3="Select INTERFACE : "
 select value in $values
 do
-	interface=$value
+	INTERFACE=$value
 	break
 done
 
@@ -80,9 +80,9 @@ then
 fi
 
 # Set IP Address
-OBTAINED_IP=$(ifconfig $interface | grep inet | awk '{print $2}')
+OBTAINED_IP=$(ifconfig $INTERFACE | grep inet | awk '{print $2}')
 IP=""
-echo "Enter Static IP for the host ($interface -> $OBTAINED_IP) : "
+echo "Enter Static IP for the host ($INTERFACE -> $OBTAINED_IP) : "
 read IP
 if [ -z "$IP" ]
 then
