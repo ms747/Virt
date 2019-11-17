@@ -15,6 +15,7 @@ function check_connectivity() {
     fi
 }
 
+# Make the host static
 function make_static_host(){
 	local INTERFACE_FILE="/etc/network/interfaces"
 	if [ -f "$INTERFACE_FILE.original" ]
@@ -37,6 +38,15 @@ iface vmbr0 inet static
         bridge-fd 0
         dns-nameservers ${GATEWAY}"  > /etc/network/interfaces
 	service networking restart
+}
+
+# Install Virt
+function install_virt(){
+	apt update > /dev/null && apt upgrade -y > /dev/null
+	echo "deb http://download.proxmox.com/debian/pve buster pve-no-subscription" > /etc/apt/sources.list.d/virt-repo.list
+	wget http://download.proxmox.com/debian/proxmox-ve-release-6.x.gpg -O /etc/apt/trusted.gpg.d/proxmox-ve-release-6.x.gpg
+	apt update -y > /dev/null && apt dist-upgrade -y > /dev/null
+	apt install -y proxmox-ve postfix open-iscsi > /dev/null
 }
 
 # Check for internet
@@ -109,12 +119,4 @@ fi
 # sed -i "/${IP}	${HOST}/d" $HOST_FILE
 
 # Installation
-apt update > /dev/null && apt upgrade -y > /dev/null
-
-echo "deb http://download.proxmox.com/debian/pve buster pve-no-subscription" > /etc/apt/sources.list.d/virt-repo.list
-
-wget http://download.proxmox.com/debian/proxmox-ve-release-6.x.gpg -O /etc/apt/trusted.gpg.d/proxmox-ve-release-6.x.gpg
-
-apt update -y > /dev/null && apt dist-upgrade -y > /dev/null
-
-apt install -y proxmox-ve postfix open-iscsi > /dev/null
+install_virt
