@@ -11,7 +11,7 @@ do
 	break
 done
 
-HOST_FILE="/home/ms/mhosts"
+HOST_FILE="/etc/hosts"
 cp $HOST_FILE $HOST_FILE.scriptbackup
 
 # Disable 127.0.1.1
